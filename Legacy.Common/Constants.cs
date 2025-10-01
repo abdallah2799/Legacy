@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Legacy.Common
 {
-    internal class Constants
+    public class Constants
     {
+        public const string ApplicationName = "Legacy Application";
+        public const string Version = "1.0.0";
+        public const string Author = "Legacy Team";
+
     }
 }
