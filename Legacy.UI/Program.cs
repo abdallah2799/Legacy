@@ -1,4 +1,4 @@
-namespace Legacy
+namespace Legacy.UI
 {
     internal static class Program
     {
