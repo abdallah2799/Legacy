@@ -117,19 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Splash_Title" xml:space="preserve">
-    <value>Legacy Examination System</value>
-  </data>
-  <data name="Splash_Welcome" xml:space="preserve">
+  <data name="Welcome" xml:space="preserve">
     <value>Welcome to Legacy</value>
   </data>
-  <data name="Splash_Subtitle" xml:space="preserve">
+  <data name="Slogan" xml:space="preserve">
     <value>Your Gateway to Academic Excellence</value>
   </data>
   <data name="Splash_Login" xml:space="preserve">
     <value>Login</value>
   </data>
-  <data name="Splash_Apply" xml:space="preserve">
+  <data name="Apply" xml:space="preserve">
     <value>Apply for Legacy</value>
   </data>
   <data name="Splash_Practice" xml:space="preserve">
@@ -153,8 +150,8 @@
   <data name="Login_ForgotPassword" xml:space="preserve">
     <value>Forgot Password?</value>
   </data>
-  <data name="Login_BackToHome" xml:space="preserve">
-    <value>Back to Home</value>
+  <data name="GoBack" xml:space="preserve">
+    <value>&lt;-- Go Back</value>
   </data>
   <data name="Menu_Dashboard" xml:space="preserve">
     <value>Dashboard</value>
@@ -266,5 +263,50 @@
   </data>
   <data name="Theme_Dark" xml:space="preserve">
     <value>Dark Mode</value>
+  </data>
+  <data name="Startup_Title" xml:space="preserve">
+    <value>Legacy Examination System</value>
+  </data>
+  <data name="WelcomeBack" xml:space="preserve">
+    <value>Welcome Back</value>
+  </data>
+  <data name="Login_Option" xml:space="preserve">
+    <value>Username / Email</value>
+  </data>
+  <data name="Application_Form" xml:space="preserve">
+    <value>Application Form</value>
+  </data>
+  <data name="Join_Us" xml:space="preserve">
+    <value>Join us</value>
+  </data>
+  <data name="Full_Name" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>Age</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Branch" xml:space="preserve">
+    <value>Branch</value>
+  </data>
+  <data name="Primary_Track" xml:space="preserve">
+    <value>Primary Track</value>
+  </data>
+  <data name="Secondary_Track" xml:space="preserve">
+    <value>Secondary Track</value>
+  </data>
+  <data name="Confirm_Application" xml:space="preserve">
+    <value>Confirm Application</value>
   </data>
 </root>

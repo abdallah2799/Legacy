@@ -1,25 +1,7 @@
-﻿using Legacy_System_UI.Infrastructure;
-using MaterialSkin;
-using MaterialSkin.Controls;
-using Legacy_System_UI.Pages.Guest;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Legacy_System_UI.Pages.Shared
-{
-    public partial class StartupForm : MaterialForm
-    {
-        private MaterialSkinManager materialSkinManager;
+﻿private MaterialSkinManager materialSkinManager;
         private LocalizationManager localizationManager;
         private ThemeManager themeManager;
-
+        
 
         private void SetupEventHandlers()
         {
@@ -58,18 +40,7 @@ namespace Legacy_System_UI.Pages.Shared
         }
         private void UpdateUIText()
         {
-            // Update labels
-            this.Text = localizationManager.GetString("Startup_Title");
-            Lb_Welcome.Text = localizationManager.GetString("Welcome");
-            Lb_Welcome.Location = new Point((Width - Lb_Welcome.Width) / 2, Lb_Welcome.Location.Y);
-
-            Lb_Slogan.Text = localizationManager.GetString("Slogan");
-            Lb_Slogan.Location = new Point((Width - Lb_Slogan.Width) / 2, Lb_Slogan.Location.Y);
-
-            // Update buttons
-            Login_Btn.Text = localizationManager.GetString("Login_Title");
-            Apply_Btn.Text = localizationManager.GetString("Apply");
-            QB_Btn.Text = localizationManager.GetString("Menu_QuestionBank");
+            
 
             // Update language combo
             cmbLanguage.Items.Clear();
@@ -94,9 +65,9 @@ namespace Legacy_System_UI.Pages.Shared
             }
             else
             {
-                ThemeSwitchBtn.Text = themeManager.IsDarkMode ? "Dark Mode" : "Light Mode";
+                ThemeSwitchBtn.Text = themeManager.IsDarkMode? "Dark Mode" : "Light Mode";
             }
-
+            
         }
 
         private void ChangeLanguage(object sender, EventArgs e)
@@ -110,48 +81,3 @@ namespace Legacy_System_UI.Pages.Shared
                 localizationManager.SetLanguage("ar");
             }
         }
-
-        public StartupForm()
-        {
-            InitializeComponent();
-            InitializeMaterialSkin();
-            SetupEventHandlers();
-        }
-
-        private void Login_Btn_Click(object sender, EventArgs e)
-        {
-            var loginForm = new LoginForm(this);
-            loginForm.Show();
-            this.Hide();
-        }
-
-        private void Apply_Btn_Click(object sender, EventArgs e)
-        {
-            var applianceForm = new ApplianceMainForm(this);
-            applianceForm.Show();
-            this.Hide();
-        }
-
-        private void QB_Btn_Click(object sender, EventArgs e)
-        {
-            var questionBankForm = new QuestionBankForm();
-            questionBankForm.Show();
-            this.Hide();
-        }
-
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                var result = MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.No)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                base.OnFormClosing(e);
-            }
-            
-        }
-    }
-}

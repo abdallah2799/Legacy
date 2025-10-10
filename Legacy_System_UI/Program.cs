@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using Legacy_System_UI;
 using Legacy_System_UI.Infrastructure;
@@ -11,6 +12,7 @@ using Legacy_System_UI.Pages.Shared;
 using Legacy_System_UI.Pages.Admin;
 using Legacy_System_UI.Pages.Student;
 using Legacy_System_UI.Pages.Instructor;
+using Legacy_System_UI.Pages.Guest;
 using MaterialSkin;
 
 internal static class Program
@@ -20,29 +22,32 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        // 1?? Create Host
+        // --- Ensure TLS 1.2 (needed for Office365 SMTP) ---
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+        // --- Build Host and configure DI ---
         var host = CreateHostBuilder().Build();
         ServiceProvider = host.Services;
 
-        // 2?? Initialize Infrastructure
+        // --- Initialize theme and localization infrastructure ---
         InitializeInfrastructure(ServiceProvider);
 
-        // 3?? Standard WinForms startup
+        // --- Standard WinForms startup ---
         System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
         System.Windows.Forms.Application.EnableVisualStyles();
         System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 
-        // 4?? Start with Splash Page
-        var splashPage = new StartupForm();
-        System.Windows.Forms.Application.Run(splashPage);
+        // --- Start the application with Splash / Startup form ---
+        var startupForm = ServiceProvider.GetRequiredService<StartupForm>();
+        System.Windows.Forms.Application.Run(startupForm);
     }
 
     private static void InitializeInfrastructure(IServiceProvider serviceProvider)
     {
-        // Initialize LocalizationManager
+        // Initialize Localization Manager
         LocalizationManager.Initialize(serviceProvider);
 
-        // Initialize MaterialSkinManager
+        // Initialize MaterialSkin Manager
         var materialSkinManager = MaterialSkinManager.Instance;
         materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
         materialSkinManager.ColorScheme = new ColorScheme(
@@ -53,12 +58,12 @@ internal static class Program
             TextShade.WHITE
         );
 
-        // Initialize ThemeManager
+        // Apply theme via ThemeManager
         var themeManager = ThemeManager.Instance;
         themeManager.ApplyTheme(materialSkinManager);
     }
 
-    // ?? Centralized host configuration
+    // --- Centralized Host Builder ---
     static IHostBuilder CreateHostBuilder() =>
         Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, config) =>
@@ -68,27 +73,16 @@ internal static class Program
             })
             .ConfigureServices((context, services) =>
             {
-                // Application DI (DbContext, Repositories, Services)
+                // Add Application layer (DbContext, Services, etc.)
                 services.AddApplication(context.Configuration);
 
-                // Register forms (with constructor injection)
+                // Register WinForms with DI
                 services.AddTransient<StartupForm>();
                 services.AddTransient<AdminMainForm>();
                 services.AddTransient<StudentMainForm>();
                 services.AddTransient<InstructorMainForm>();
                 services.AddTransient<LoginForm>();
-                //services.AddTransient<GuestPracticeForm>();
-                //services.AddTransient<BranchManagerApplicantReviewForm>();
-                //services.AddTransient<AdminApplicantFinalizationForm>();
-                //services.AddTransient<UserManagementForm>();
-                //services.AddTransient<UserDetailsForm>();
-                //services.AddTransient<BranchManagementForm>();
-                //services.AddTransient<TrackManagementForm>();
-                //services.AddTransient<UI.FormsLayer.Instructor.MyCoursesForm>();
-                //services.AddTransient<UI.FormsLayer.Instructor.ExamManagementForm>();
-                //services.AddTransient<UI.FormsLayer.Student.MyExamsForm>();
-                //services.AddTransient<UI.FormsLayer.Student.TakeExamForm>();
-                //services.AddTransient<UI.FormsLayer.Student.ExamResultsForm>();
-                //services.AddTransient<ReportViewerForm>();
+                services.AddTransient<ApplianceMainForm>();
+                services.AddTransient<QuestionBankForm>();
             });
 }

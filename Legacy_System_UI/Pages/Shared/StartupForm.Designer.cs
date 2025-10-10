@@ -35,6 +35,11 @@ namespace Legacy_System_UI.Pages.Shared
         {
             cmbLanguage = new MaterialComboBox();
             ThemeSwitchBtn = new MaterialSwitch();
+            Lb_Welcome = new MaterialLabel();
+            Lb_Slogan = new MaterialLabel();
+            Login_Btn = new MaterialButton();
+            Apply_Btn = new MaterialButton();
+            QB_Btn = new MaterialButton();
             SuspendLayout();
             // 
             // cmbLanguage
@@ -79,15 +84,112 @@ namespace Legacy_System_UI.Pages.Shared
             ThemeSwitchBtn.UseVisualStyleBackColor = true;
             ThemeSwitchBtn.CheckedChanged += ToggleTheme;
             // 
+            // Lb_Welcome
+            // 
+            Lb_Welcome.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            Lb_Welcome.AutoSize = true;
+            Lb_Welcome.Depth = 0;
+            Lb_Welcome.Font = new Font("Roboto", 48F, FontStyle.Bold, GraphicsUnit.Pixel);
+            Lb_Welcome.FontType = MaterialSkinManager.fontType.H3;
+            Lb_Welcome.Location = new Point(78, 109);
+            Lb_Welcome.MouseState = MouseState.HOVER;
+            Lb_Welcome.Name = "Lb_Welcome";
+            Lb_Welcome.Size = new Size(432, 58);
+            Lb_Welcome.TabIndex = 3;
+            Lb_Welcome.Text = "Welcome To Legacy";
+            // 
+            // Lb_Slogan
+            // 
+            Lb_Slogan.AutoSize = true;
+            Lb_Slogan.Depth = 0;
+            Lb_Slogan.Font = new Font("Roboto Medium", 20F, FontStyle.Bold, GraphicsUnit.Pixel);
+            Lb_Slogan.FontType = MaterialSkinManager.fontType.H6;
+            Lb_Slogan.Location = new Point(117, 177);
+            Lb_Slogan.MouseState = MouseState.HOVER;
+            Lb_Slogan.Name = "Lb_Slogan";
+            Lb_Slogan.Size = new Size(342, 24);
+            Lb_Slogan.TabIndex = 4;
+            Lb_Slogan.Text = "Your Gateway to Academic Excellence";
+            // 
+            // Login_Btn
+            // 
+            Login_Btn.AutoSize = false;
+            Login_Btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Login_Btn.Density = MaterialButton.MaterialButtonDensity.Default;
+            Login_Btn.Depth = 0;
+            Login_Btn.HighEmphasis = true;
+            Login_Btn.Icon = null;
+            Login_Btn.Location = new Point(136, 270);
+            Login_Btn.Margin = new Padding(4, 6, 4, 6);
+            Login_Btn.MouseState = MouseState.HOVER;
+            Login_Btn.Name = "Login_Btn";
+            Login_Btn.NoAccentTextColor = Color.Empty;
+            Login_Btn.Size = new Size(299, 61);
+            Login_Btn.TabIndex = 5;
+            Login_Btn.Text = "Login";
+            Login_Btn.Type = MaterialButton.MaterialButtonType.Contained;
+            Login_Btn.UseAccentColor = false;
+            Login_Btn.UseVisualStyleBackColor = true;
+            Login_Btn.Click += Login_Btn_Click;
+            // 
+            // Apply_Btn
+            // 
+            Apply_Btn.AutoSize = false;
+            Apply_Btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Apply_Btn.Density = MaterialButton.MaterialButtonDensity.Default;
+            Apply_Btn.Depth = 0;
+            Apply_Btn.HighEmphasis = true;
+            Apply_Btn.Icon = null;
+            Apply_Btn.Location = new Point(136, 399);
+            Apply_Btn.Margin = new Padding(4, 6, 4, 6);
+            Apply_Btn.MouseState = MouseState.HOVER;
+            Apply_Btn.Name = "Apply_Btn";
+            Apply_Btn.NoAccentTextColor = Color.Empty;
+            Apply_Btn.Size = new Size(299, 61);
+            Apply_Btn.TabIndex = 5;
+            Apply_Btn.Text = "Apply For Legacy";
+            Apply_Btn.Type = MaterialButton.MaterialButtonType.Contained;
+            Apply_Btn.UseAccentColor = false;
+            Apply_Btn.UseVisualStyleBackColor = true;
+            Apply_Btn.Click += Apply_Btn_Click;
+            // 
+            // QB_Btn
+            // 
+            QB_Btn.AutoSize = false;
+            QB_Btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            QB_Btn.Density = MaterialButton.MaterialButtonDensity.Default;
+            QB_Btn.Depth = 0;
+            QB_Btn.HighEmphasis = true;
+            QB_Btn.Icon = null;
+            QB_Btn.Location = new Point(136, 533);
+            QB_Btn.Margin = new Padding(4, 6, 4, 6);
+            QB_Btn.MouseState = MouseState.HOVER;
+            QB_Btn.Name = "QB_Btn";
+            QB_Btn.NoAccentTextColor = Color.Empty;
+            QB_Btn.Size = new Size(299, 61);
+            QB_Btn.TabIndex = 5;
+            QB_Btn.Text = "Question Bank";
+            QB_Btn.Type = MaterialButton.MaterialButtonType.Contained;
+            QB_Btn.UseAccentColor = false;
+            QB_Btn.UseVisualStyleBackColor = true;
+            QB_Btn.Click += QB_Btn_Click;
+            // 
             // StartupForm
             // 
             ClientSize = new Size(573, 752);
+            Controls.Add(QB_Btn);
+            Controls.Add(Apply_Btn);
+            Controls.Add(Login_Btn);
+            Controls.Add(Lb_Slogan);
+            Controls.Add(Lb_Welcome);
             Controls.Add(ThemeSwitchBtn);
             Controls.Add(cmbLanguage);
-            FormStyle = FormStyles.ActionBar_None;
+            MaximizeBox = false;
+            MaximumSize = new Size(573, 752);
+            MinimumSize = new Size(573, 752);
             Name = "StartupForm";
-            Padding = new Padding(3, 24, 3, 3);
             StartPosition = FormStartPosition.CenterScreen;
+            Text = "Legacy Examination Stystem";
             ResumeLayout(false);
             PerformLayout();
 
@@ -96,5 +198,10 @@ namespace Legacy_System_UI.Pages.Shared
         #endregion
         private MaterialSwitch ThemeSwitchBtn;
         private MaterialComboBox cmbLanguage;
+        private MaterialLabel Lb_Welcome;
+        private MaterialLabel Lb_Slogan;
+        private MaterialButton Login_Btn;
+        private MaterialButton Apply_Btn;
+        private MaterialButton QB_Btn;
     }
 }
