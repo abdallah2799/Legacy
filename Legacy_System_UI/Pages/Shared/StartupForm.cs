@@ -134,7 +134,7 @@ namespace Legacy_System_UI.Pages.Shared
 
         private void QB_Btn_Click(object sender, EventArgs e)
         {
-            var questionBankForm = new QuestionBankForm();
+            var questionBankForm = new QuestionBankForm(this);
             questionBankForm.Show();
             this.Hide();
         }
