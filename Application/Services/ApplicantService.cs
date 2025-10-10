@@ -39,6 +39,18 @@ namespace Application.Services
             }
         }
 
+        public async Task<Applicant?> GetApplicationByCodeAsync(string applicationCode)
+        {
+            try
+            {
+                return await _applicantRepository.FindByCodeAsync(applicationCode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving pending applications");
+                throw;
+            }
+        }
         public async Task ApproveApplicantAsync(int applicantId)
         {
             try

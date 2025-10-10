@@ -151,7 +151,14 @@ namespace Legacy_System_UI.Pages.Shared
                 }
                 base.OnFormClosing(e);
             }
-            
+
+        }
+
+        private void CheckStatus_Btn_Click(object sender, EventArgs e)
+        {
+            var checkApplicationStatusForm = new CheckApplicationStatusForm(this);
+            checkApplicationStatusForm.Show();
+            this.Hide();
         }
     }
 }

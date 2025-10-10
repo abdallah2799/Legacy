@@ -11,5 +11,6 @@ namespace Core.Interfaces.Repositories
     {
         Task<IEnumerable<Applicant>> GetPendingApplicationsAsync();
         Task<IEnumerable<Applicant>> GetByStatusAsync(string status);
+        Task<Applicant?> FindByCodeAsync(string code);
     }
 }

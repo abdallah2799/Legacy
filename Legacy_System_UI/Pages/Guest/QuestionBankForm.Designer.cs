@@ -251,6 +251,7 @@
             Controls.Add(cmbLanguage);
             MaximizeBox = false;
             Name = "QuestionBankForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Question Bank";
             Load += QuestionBankForm_Load;
             ResumeLayout(false);

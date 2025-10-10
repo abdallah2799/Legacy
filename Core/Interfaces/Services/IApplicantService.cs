@@ -13,5 +13,7 @@ namespace Core.Interfaces.Services
         Task ApproveApplicantAsync(int applicantId);
         Task RejectApplicantAsync(int applicantId);
         Task SubmitApplicationAsync(Applicant applicant);
+
+        Task<Applicant?> GetApplicationByCodeAsync(string applicationCode);
     }
 }

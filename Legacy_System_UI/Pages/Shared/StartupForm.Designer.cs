@@ -40,6 +40,7 @@ namespace Legacy_System_UI.Pages.Shared
             Login_Btn = new MaterialButton();
             Apply_Btn = new MaterialButton();
             QB_Btn = new MaterialButton();
+            CheckStatus_Btn = new MaterialButton();
             SuspendLayout();
             // 
             // cmbLanguage
@@ -140,7 +141,7 @@ namespace Legacy_System_UI.Pages.Shared
             Apply_Btn.Depth = 0;
             Apply_Btn.HighEmphasis = true;
             Apply_Btn.Icon = null;
-            Apply_Btn.Location = new Point(136, 399);
+            Apply_Btn.Location = new Point(136, 377);
             Apply_Btn.Margin = new Padding(4, 6, 4, 6);
             Apply_Btn.MouseState = MouseState.HOVER;
             Apply_Btn.Name = "Apply_Btn";
@@ -161,7 +162,7 @@ namespace Legacy_System_UI.Pages.Shared
             QB_Btn.Depth = 0;
             QB_Btn.HighEmphasis = true;
             QB_Btn.Icon = null;
-            QB_Btn.Location = new Point(136, 533);
+            QB_Btn.Location = new Point(136, 589);
             QB_Btn.Margin = new Padding(4, 6, 4, 6);
             QB_Btn.MouseState = MouseState.HOVER;
             QB_Btn.Name = "QB_Btn";
@@ -174,10 +175,32 @@ namespace Legacy_System_UI.Pages.Shared
             QB_Btn.UseVisualStyleBackColor = true;
             QB_Btn.Click += QB_Btn_Click;
             // 
+            // CheckStatus_Btn
+            // 
+            CheckStatus_Btn.AutoSize = false;
+            CheckStatus_Btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            CheckStatus_Btn.Density = MaterialButton.MaterialButtonDensity.Default;
+            CheckStatus_Btn.Depth = 0;
+            CheckStatus_Btn.HighEmphasis = true;
+            CheckStatus_Btn.Icon = null;
+            CheckStatus_Btn.Location = new Point(136, 481);
+            CheckStatus_Btn.Margin = new Padding(4, 6, 4, 6);
+            CheckStatus_Btn.MouseState = MouseState.HOVER;
+            CheckStatus_Btn.Name = "CheckStatus_Btn";
+            CheckStatus_Btn.NoAccentTextColor = Color.Empty;
+            CheckStatus_Btn.Size = new Size(299, 61);
+            CheckStatus_Btn.TabIndex = 5;
+            CheckStatus_Btn.Text = "Check Application Status";
+            CheckStatus_Btn.Type = MaterialButton.MaterialButtonType.Contained;
+            CheckStatus_Btn.UseAccentColor = false;
+            CheckStatus_Btn.UseVisualStyleBackColor = true;
+            CheckStatus_Btn.Click += CheckStatus_Btn_Click;
+            // 
             // StartupForm
             // 
             ClientSize = new Size(573, 752);
             Controls.Add(QB_Btn);
+            Controls.Add(CheckStatus_Btn);
             Controls.Add(Apply_Btn);
             Controls.Add(Login_Btn);
             Controls.Add(Lb_Slogan);
@@ -203,5 +226,6 @@ namespace Legacy_System_UI.Pages.Shared
         private MaterialButton Login_Btn;
         private MaterialButton Apply_Btn;
         private MaterialButton QB_Btn;
+        private MaterialButton CheckStatus_Btn;
     }
 }
