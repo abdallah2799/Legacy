@@ -214,7 +214,7 @@ namespace Legacy_System_UI.Pages.Shared
                     } else if(SessionManager.Instance.IsStudent())
                     {
                         // Navigate to student dashboard
-                        var studentDashboard = new StudentMainForm();
+                        var studentDashboard = new StudentMainForm(user);
                         studentDashboard.Show();
                         this.Hide();
                         return;

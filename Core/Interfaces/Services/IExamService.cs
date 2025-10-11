@@ -14,5 +14,6 @@ namespace Core.Interfaces.Services
         Task<Exam?> GetExamWithQuestionsAsync(int examId);
         Task CreateExamAsync(Exam exam);
         Task UpdateExamStatusAsync(int examId, string status);
+        Task<int> SubmitExamAsync(int studentId, int examId, Dictionary<int, List<int>> answers);
     }
 }

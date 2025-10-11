@@ -48,8 +48,8 @@
             GoBackHomeBtn.Depth = 0;
             GoBackHomeBtn.HighEmphasis = true;
             GoBackHomeBtn.Icon = null;
-            GoBackHomeBtn.Location = new Point(7, 70);
-            GoBackHomeBtn.Margin = new Padding(4, 6, 4, 6);
+            GoBackHomeBtn.Location = new Point(7, 72);
+            GoBackHomeBtn.Margin = new Padding(4, 4, 4, 4);
             GoBackHomeBtn.MouseState = MaterialSkin.MouseState.HOVER;
             GoBackHomeBtn.Name = "GoBackHomeBtn";
             GoBackHomeBtn.NoAccentTextColor = Color.Empty;
@@ -66,7 +66,7 @@
             ThemeSwitchBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             ThemeSwitchBtn.AutoSize = true;
             ThemeSwitchBtn.Depth = 0;
-            ThemeSwitchBtn.Location = new Point(341, 621);
+            ThemeSwitchBtn.Location = new Point(281, 457);
             ThemeSwitchBtn.Margin = new Padding(0);
             ThemeSwitchBtn.MouseLocation = new Point(-1, -1);
             ThemeSwitchBtn.MouseState = MaterialSkin.MouseState.HOVER;
@@ -94,11 +94,12 @@
             cmbLanguage.IntegralHeight = false;
             cmbLanguage.ItemHeight = 43;
             cmbLanguage.Items.AddRange(new object[] { "English", "العربية" });
-            cmbLanguage.Location = new Point(6, 609);
+            cmbLanguage.Location = new Point(5, 457);
+            cmbLanguage.Margin = new Padding(3, 2, 3, 2);
             cmbLanguage.MaxDropDownItems = 4;
             cmbLanguage.MouseState = MaterialSkin.MouseState.OUT;
             cmbLanguage.Name = "cmbLanguage";
-            cmbLanguage.Size = new Size(151, 49);
+            cmbLanguage.Size = new Size(133, 49);
             cmbLanguage.StartIndex = 0;
             cmbLanguage.TabIndex = 3;
             cmbLanguage.SelectedIndexChanged += ChangeLanguage;
@@ -111,9 +112,10 @@
             Panel_Login.Controls.Add(Btn_Login);
             Panel_Login.Controls.Add(Tb_Password);
             Panel_Login.Controls.Add(Tb_LoginOption);
-            Panel_Login.Location = new Point(38, 165);
+            Panel_Login.Location = new Point(33, 124);
+            Panel_Login.Margin = new Padding(3, 2, 3, 2);
             Panel_Login.Name = "Panel_Login";
-            Panel_Login.Size = new Size(409, 399);
+            Panel_Login.Size = new Size(358, 299);
             Panel_Login.TabIndex = 5;
             // 
             // Lb_Password
@@ -121,7 +123,7 @@
             Lb_Password.AutoSize = true;
             Lb_Password.Depth = 0;
             Lb_Password.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
-            Lb_Password.Location = new Point(29, 189);
+            Lb_Password.Location = new Point(25, 142);
             Lb_Password.MouseState = MaterialSkin.MouseState.HOVER;
             Lb_Password.Name = "Lb_Password";
             Lb_Password.Size = new Size(71, 19);
@@ -133,7 +135,7 @@
             Lb_LoginOption.AutoSize = true;
             Lb_LoginOption.Depth = 0;
             Lb_LoginOption.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
-            Lb_LoginOption.Location = new Point(29, 80);
+            Lb_LoginOption.Location = new Point(25, 60);
             Lb_LoginOption.MouseState = MaterialSkin.MouseState.HOVER;
             Lb_LoginOption.Name = "Lb_LoginOption";
             Lb_LoginOption.Size = new Size(131, 19);
@@ -146,12 +148,12 @@
             Lb_WelcomBack.Depth = 0;
             Lb_WelcomBack.Font = new Font("Roboto", 34F, FontStyle.Bold, GraphicsUnit.Pixel);
             Lb_WelcomBack.FontType = MaterialSkin.MaterialSkinManager.fontType.H4;
-            Lb_WelcomBack.Location = new Point(90, 11);
+            Lb_WelcomBack.Location = new Point(63, 9);
             Lb_WelcomBack.MouseState = MaterialSkin.MouseState.HOVER;
             Lb_WelcomBack.Name = "Lb_WelcomBack";
-            Lb_WelcomBack.Size = new Size(215, 41);
+            Lb_WelcomBack.Size = new Size(233, 41);
             Lb_WelcomBack.TabIndex = 2;
-            Lb_WelcomBack.Text = "Welcom Back ";
+            Lb_WelcomBack.Text = "Welcome Back ";
             // 
             // Btn_Login
             // 
@@ -161,12 +163,12 @@
             Btn_Login.Depth = 0;
             Btn_Login.HighEmphasis = true;
             Btn_Login.Icon = null;
-            Btn_Login.Location = new Point(125, 289);
-            Btn_Login.Margin = new Padding(4, 6, 4, 6);
+            Btn_Login.Location = new Point(109, 225);
+            Btn_Login.Margin = new Padding(4, 4, 4, 4);
             Btn_Login.MouseState = MaterialSkin.MouseState.HOVER;
             Btn_Login.Name = "Btn_Login";
             Btn_Login.NoAccentTextColor = Color.Empty;
-            Btn_Login.Size = new Size(158, 36);
+            Btn_Login.Size = new Size(138, 27);
             Btn_Login.TabIndex = 1;
             Btn_Login.Text = "Login";
             Btn_Login.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -181,13 +183,14 @@
             Tb_Password.Depth = 0;
             Tb_Password.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
             Tb_Password.LeadingIcon = null;
-            Tb_Password.Location = new Point(29, 211);
+            Tb_Password.Location = new Point(25, 164);
+            Tb_Password.Margin = new Padding(3, 2, 3, 2);
             Tb_Password.MaxLength = 50;
             Tb_Password.MouseState = MaterialSkin.MouseState.OUT;
             Tb_Password.Multiline = false;
             Tb_Password.Name = "Tb_Password";
             Tb_Password.Password = true;
-            Tb_Password.Size = new Size(357, 50);
+            Tb_Password.Size = new Size(312, 50);
             Tb_Password.TabIndex = 0;
             Tb_Password.Text = "";
             Tb_Password.TrailingIcon = null;
@@ -199,29 +202,32 @@
             Tb_LoginOption.Depth = 0;
             Tb_LoginOption.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
             Tb_LoginOption.LeadingIcon = null;
-            Tb_LoginOption.Location = new Point(29, 102);
+            Tb_LoginOption.Location = new Point(25, 82);
+            Tb_LoginOption.Margin = new Padding(3, 2, 3, 2);
             Tb_LoginOption.MaxLength = 50;
             Tb_LoginOption.MouseState = MaterialSkin.MouseState.OUT;
             Tb_LoginOption.Multiline = false;
             Tb_LoginOption.Name = "Tb_LoginOption";
-            Tb_LoginOption.Size = new Size(357, 50);
+            Tb_LoginOption.Size = new Size(312, 50);
             Tb_LoginOption.TabIndex = 0;
             Tb_LoginOption.Text = "";
             Tb_LoginOption.TrailingIcon = null;
             // 
             // LoginForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(491, 664);
+            ClientSize = new Size(430, 498);
             Controls.Add(Panel_Login);
             Controls.Add(ThemeSwitchBtn);
             Controls.Add(cmbLanguage);
             Controls.Add(GoBackHomeBtn);
+            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
-            MaximumSize = new Size(491, 664);
-            MinimumSize = new Size(491, 664);
+            MaximumSize = new Size(430, 498);
+            MinimumSize = new Size(430, 498);
             Name = "LoginForm";
+            Padding = new Padding(3, 48, 3, 2);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "LoginForm";
             Panel_Login.ResumeLayout(false);
