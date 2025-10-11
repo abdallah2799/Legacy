@@ -37,7 +37,7 @@
             FlowPanel_Options = new FlowLayoutPanel();
             Btn_Submit = new MaterialSkin.Controls.MaterialButton();
             Btn_Next = new MaterialSkin.Controls.MaterialButton();
-            Lbl_Result = new MaterialSkin.Controls.MaterialLabel();
+            Lbl_Result = new Label();
             Btn_Previous = new MaterialSkin.Controls.MaterialButton();
             SuspendLayout();
             // 
@@ -202,15 +202,15 @@
             // 
             // Lbl_Result
             // 
-            Lbl_Result.AutoSize = true;
-            Lbl_Result.Depth = 0;
-            Lbl_Result.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            Lbl_Result.BackColor = Color.Transparent;
+            Lbl_Result.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             Lbl_Result.ForeColor = Color.Gray;
             Lbl_Result.Location = new Point(30, 600);
-            Lbl_Result.MouseState = MaterialSkin.MouseState.HOVER;
+            Lbl_Result.MaximumSize = new Size(740, 800);
             Lbl_Result.Name = "Lbl_Result";
-            Lbl_Result.Size = new Size(1, 0);
-            Lbl_Result.TabIndex = 12;
+            Lbl_Result.Size = new Size(740, 100);
+            Lbl_Result.TabIndex = 0;
+            Lbl_Result.UseMnemonic = false;
             // 
             // Btn_Previous
             // 
@@ -271,7 +271,7 @@
         private System.Windows.Forms.FlowLayoutPanel FlowPanel_Options;
         private MaterialSkin.Controls.MaterialButton Btn_Submit;
         private MaterialSkin.Controls.MaterialButton Btn_Next;
-        private MaterialSkin.Controls.MaterialLabel Lbl_Result;
+        private Label Lbl_Result;
         private MaterialSkin.Controls.MaterialButton Btn_Previous;
     }
 }

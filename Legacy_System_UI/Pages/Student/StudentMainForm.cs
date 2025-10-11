@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Legacy_System_UI.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,15 @@ namespace Legacy_System_UI.Pages.Student
 {
     public partial class StudentMainForm : Form
     {
+        private readonly SessionManager sessionManager;
         public StudentMainForm()
         {
             InitializeComponent();
+
+            sessionManager= SessionManager.Instance;
+            materialLabel1.Text = sessionManager.UserName;
         }
+
+
     }
 }

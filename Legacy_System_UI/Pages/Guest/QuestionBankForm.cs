@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Common.Enums;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Legacy_System_UI.Infrastructure;
@@ -180,40 +181,108 @@ namespace Legacy_System_UI.Pages.Guest
 
             foreach (var option in question.Answers)
             {
-                var radio = new RadioButton
+                if(question.QuestionTypeEnum == QuestionTypeEnum.ChooseAll)
                 {
-                    Text = option.Body,
-                    Tag = option.IsCorrect,
-                    AutoSize = true,
-                    Font = new Font("Segoe UI", 10)
-                };
-                FlowPanel_Options.Controls.Add(radio);
+                    var checkBox = new MaterialCheckbox
+                    {
+                        Text = option.Body,
+                        Tag = option,
+                        AutoSize = true
+                    };
+                    FlowPanel_Options.Controls.Add(checkBox);
+
+                }
+                else
+                {
+                    var radio = new RadioButton
+                    {
+                        Text = option.Body,
+                        Tag = option.IsCorrect,
+                        AutoSize = true,
+                        Font = new Font("Segoe UI", 10)
+                    };
+                    FlowPanel_Options.Controls.Add(radio);
+                }
+                    
             }
             Lbl_Result.Text = "";
         }
 
         private void Btn_Submit_Click(object sender, EventArgs e)
         {
-            var selectedOption = FlowPanel_Options.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
-            if (selectedOption == null)
+            if (_questions == null || !_questions.Any()) return;
+
+            var question = _questions.ToList()[_currentQuestionIndex]; // assuming you track this
+            Lbl_Result.Text = "";
+            Lbl_Result.ForeColor = Color.Black;
+
+            // 🔹 Handle Choose All (multiple correct answers)
+            if (question.QuestionTypeEnum == QuestionTypeEnum.ChooseAll)
             {
-                MessageBox.Show("Please select an answer first!");
-                return;
+                var selectedOptions = FlowPanel_Options.Controls
+                    .OfType<MaterialCheckbox>()
+                    .Where(cb => cb.Checked)
+                    .Select(cb => (Answer)cb.Tag)
+                    .ToList();
+
+                if (!selectedOptions.Any())
+                {
+                    MessageBox.Show("Please select at least one option!", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var correctAnswers = question.Answers.Where(a => a.IsCorrect).ToList();
+
+                bool allCorrect = correctAnswers.All(c => selectedOptions.Any(s => s.AnswerId == c.AnswerId)) &&
+                                  selectedOptions.All(s => correctAnswers.Any(c => c.AnswerId == s.AnswerId));
+
+                if (allCorrect)
+                {
+                    Lbl_Result.ForeColor = Color.Green;
+                    Lbl_Result.Text = "✅ Correct! You selected all the right answers.";
+                }
+                else
+                {
+
+
+                    var correctText = string.Join("\n", correctAnswers.Select(a => a.Body));
+                    Lbl_Result.Text = $"❌ Wrong. Correct answers:\n{correctText}";
+
+
+                }
             }
 
-            bool isCorrect = (bool)selectedOption.Tag;
-            if (isCorrect)
-            {
-                Lbl_Result.ForeColor = Color.Green;
-                Lbl_Result.Text = "✅ Correct!";
-            }
+            // 🔹 Handle single-choice question
             else
             {
-                Lbl_Result.ForeColor = Color.Red;
-                var correct = FlowPanel_Options.Controls.OfType<RadioButton>().FirstOrDefault(r => (bool)r.Tag);
-                Lbl_Result.Text = $"❌ Wrong. Correct answer: {correct?.Text}";
+                var selectedOption = FlowPanel_Options.Controls
+                    .OfType<RadioButton>()
+                    .FirstOrDefault(r => r.Checked);
+
+                if (selectedOption == null)
+                {
+                    MessageBox.Show("Please select an answer first!", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                bool isCorrect = (bool)selectedOption.Tag;
+
+                if (isCorrect)
+                {
+                    Lbl_Result.ForeColor = Color.Green;
+                    Lbl_Result.Text = "✅ Correct!";
+                }
+                else
+                {
+                    Lbl_Result.ForeColor = Color.Red;
+                    var correct = FlowPanel_Options.Controls
+                        .OfType<RadioButton>()
+                        .FirstOrDefault(r => (bool)r.Tag);
+                    Lbl_Result.Text = $"❌ Wrong. Correct answer:\n {correct?.Text}";
+                }
             }
         }
+
 
         private void Btn_Next_Click(object sender, EventArgs e)
         {
@@ -244,5 +313,7 @@ namespace Legacy_System_UI.Pages.Guest
                 MessageBox.Show("No Previous Questions..!");
             }
         }
+
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.Services;
+using Core.Models;
 using Legacy_System_UI.Infrastructure;
 using Legacy_System_UI.Pages.Admin;
 using Legacy_System_UI.Pages.Instructor;
@@ -194,22 +195,23 @@ namespace Legacy_System_UI.Pages.Shared
                     // Show success message
                     MessageBox.Show($"Welcome back, {user.Username}!", "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    if(user.Role == "Admin")
+                    if(SessionManager.Instance.IsAdmin())
                     {
                         // Navigate to admin dashboard
                         var adminDashboard = new AdminMainForm();
                         adminDashboard.Show();
+                        sessionManager.Login(user);
                         this.Hide();
                         return;
                     }
-                    else if(user.Role == "Instructor")
+                    else if(SessionManager.Instance.IsInstructor())
                     {
                         // Navigate to instructor dashboard
                         var instructorDashboard = new InstructorMainForm();
                         instructorDashboard.Show();
                         this.Hide();
                         return;
-                    } else if(user.Role == "Student")
+                    } else if(SessionManager.Instance.IsStudent())
                     {
                         // Navigate to student dashboard
                         var studentDashboard = new StudentMainForm();
