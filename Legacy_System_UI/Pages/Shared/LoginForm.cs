@@ -212,7 +212,7 @@ namespace Legacy_System_UI.Pages.Shared
                     } else if(user.Role == "Student")
                     {
                         // Navigate to student dashboard
-                        var studentDashboard = new StudentMainForm();
+                        var studentDashboard = new StudentMainForm(user);
                         studentDashboard.Show();
                         this.Hide();
                         return;

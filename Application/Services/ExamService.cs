@@ -1,8 +1,11 @@
-using Core.Interfaces.Services;
-using Core.Interfaces.Repositories;
-using Core.Models;
-using Common.Enums;
 using Common;
+using Common.Enums;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
+using Core.Models;
+using Data;
+using Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,21 +19,30 @@ namespace Application.Services
         private readonly IExamRepository _examRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly ICoursePolicyRepository _coursePolicyRepository;
+        private readonly IStudentExamRepository _studentExamRepository; // Add this
+        private readonly IStudentAnswerRepository _studentAnswerRepository; // Add this
         private readonly ICacheService _cacheService;
         private readonly ILogger<ExamService> _logger;
+        private readonly LegacyDbContext _context; // Add DbContext for SP call
 
         public ExamService(
             IExamRepository examRepository,
             IQuestionRepository questionRepository,
             ICoursePolicyRepository coursePolicyRepository,
+            IStudentExamRepository studentExamRepository, // Add this
+            IStudentAnswerRepository studentAnswerRepository, // Add this
             ICacheService cacheService,
-            ILogger<ExamService> logger)
+            ILogger<ExamService> logger,
+            LegacyDbContext context) // Add this
         {
             _examRepository = examRepository;
             _questionRepository = questionRepository;
             _coursePolicyRepository = coursePolicyRepository;
+            _studentExamRepository = studentExamRepository; // Add this
+            _studentAnswerRepository = studentAnswerRepository; // Add this
             _cacheService = cacheService;
             _logger = logger;
+            _context = context; // Add this
         }
 
         public async Task<IEnumerable<Exam>> GetAllExamsAsync()
@@ -185,6 +197,82 @@ namespace Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error generating questions for exam {ExamId}", exam.ExamId);
+                throw;
+            }
+        }
+
+        // Inside your ExamService.cs
+
+        public async Task<int> SubmitExamAsync(int studentId, int examId, Dictionary<int, List<int>> answers)
+        {
+            try
+            {
+                // 1. Create the StudentExam record
+                var studentExam = new StudentExam
+                {
+                    StudentId = studentId,
+                    ExamId = examId,
+                    SubmittedAt = DateTime.UtcNow
+                };
+                await _studentExamRepository.AddAsync(studentExam);
+                await _studentExamRepository.SaveChangesAsync();
+
+                _logger.LogInformation("Created StudentExam record {StudentExamId}...", studentExam.StudentExamId);
+
+                // 2. Save all student answers
+                if (answers != null && answers.Any())
+                {
+                    var answersToSave = new List<StudentAnswer>();
+                    foreach (var questionAnswers in answers)
+                    {
+                        foreach (var answerId in questionAnswers.Value)
+                        {
+                            answersToSave.Add(new StudentAnswer
+                            {
+                                StudentExamId = studentExam.StudentExamId,
+                                QuestionId = questionAnswers.Key,
+                                AnswerId = answerId
+                            });
+                        }
+                    }
+                    foreach (var answer in answersToSave)
+                    {
+                        await _studentAnswerRepository.AddAsync(answer);
+                    }
+                    await _studentAnswerRepository.SaveChangesAsync();
+                    _logger.LogInformation("Saved {AnswerCount} answers for StudentExam {StudentExamId}", answersToSave.Count, studentExam.StudentExamId);
+                }
+
+                // --- THIS IS THE FIX ---
+                // 3. Call the stored procedure and get the scalar result.
+                // We use ADO.NET through the DbContext for this.
+                var finalScore = 0;
+                var connection = _context.Database.GetDbConnection();
+                await connection.OpenAsync();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "EXEC sp_CalculateStudentExamScore @StudentExamID";
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = "@StudentExamID";
+                    parameter.Value = studentExam.StudentExamId;
+                    command.Parameters.Add(parameter);
+
+                    var result = await command.ExecuteScalarAsync();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        finalScore = Convert.ToInt32(result);
+                    }
+                }
+                await connection.CloseAsync();
+                // -----------------------
+
+                _logger.LogInformation("Calculated final score {FinalScore} for StudentExam {StudentExamId}", finalScore, studentExam.StudentExamId);
+
+                return finalScore;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting exam for Student {StudentId}, Exam {ExamId}", studentId, examId);
                 throw;
             }
         }

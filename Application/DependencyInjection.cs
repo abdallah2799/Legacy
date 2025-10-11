@@ -16,70 +16,72 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            // DbContext registration
+            // 1. DbContext registration remains Transient
             services.AddDbContext<LegacyDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-                options.UseLazyLoadingProxies(); // enable lazy loading
-            });
+                options.UseLazyLoadingProxies();
+            }, ServiceLifetime.Transient);
 
             // Memory Cache
             services.AddMemoryCache();
 
-            // Repository registrations
-            services.AddScoped<ICourseRepository, CourseRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IAdminRepository, AdminRepository>();
-            services.AddScoped<IInstructorRepository, InstructorRepository>();
-            services.AddScoped<IStudentRepository, StudentRepository>();
-            services.AddScoped<IExamRepository, ExamRepository>();
-            services.AddScoped<IStudentExamRepository, StudentExamRepository>();
-            services.AddScoped<IStudentAnswerRepository, StudentAnswerRepository>();
-            services.AddScoped<IQuestionRepository, QuestionRepository>();
-            services.AddScoped<IAnswerRepository, AnswerRepository>();
-            services.AddScoped<IBranchRepository, BranchRepository>();
-            services.AddScoped<ITrackRepository, TrackRepository>();
-            services.AddScoped<IBranchTrackRepository, BranchTrackRepository>();
-            services.AddScoped<ITrackCourseRepository, TrackCourseRepository>();
-            services.AddScoped<ICoursePolicyRepository, CoursePolicyRepository>();
-            services.AddScoped<IApplicantRepository, ApplicantRepository>();
-            services.AddScoped<ITranslationRepository, TranslationRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
+            // --- THIS IS THE FINAL FIX ---
+            // 2. Change ALL Repository registrations to Transient
+            services.AddTransient<ICourseRepository, CourseRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddTransient<IInstructorRepository, InstructorRepository>();
+            services.AddTransient<IStudentRepository, StudentRepository>();
+            services.AddTransient<IExamRepository, ExamRepository>();
+            services.AddTransient<IStudentExamRepository, StudentExamRepository>();
+            services.AddTransient<IStudentAnswerRepository, StudentAnswerRepository>();
+            services.AddTransient<IQuestionRepository, QuestionRepository>();
+            services.AddTransient<IAnswerRepository, AnswerRepository>();
+            services.AddTransient<IBranchRepository, BranchRepository>();
+            services.AddTransient<ITrackRepository, TrackRepository>();
+            services.AddTransient<IBranchTrackRepository, BranchTrackRepository>();
+            services.AddTransient<ITrackCourseRepository, TrackCourseRepository>();
+            services.AddTransient<ICoursePolicyRepository, CoursePolicyRepository>();
+            services.AddTransient<IApplicantRepository, ApplicantRepository>();
+            services.AddTransient<ITranslationRepository, TranslationRepository>();
+            services.AddTransient<ILogRepository, LogRepository>();
 
-            // Service registrations
-            services.AddScoped<ICacheService, CacheService>();
-            services.AddScoped<IValidationService, ValidationService>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ExamNotificationService>();
+            // 3. Service registrations remain Transient
+            services.AddTransient<ICacheService, CacheService>();
+            services.AddTransient<IValidationService, ValidationService>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ExamNotificationService>();
 
             // Authentication & User Management
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ILogService, LogService>();
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ILogService, LogService>();
 
             // Student Services
-            services.AddScoped<IStudentExamService, StudentExamService>();
-            services.AddScoped<IStudentAnswerService, StudentAnswerService>();
+            services.AddTransient<IStudentExamService, StudentExamService>();
+            services.AddTransient<IStudentAnswerService, StudentAnswerService>();
 
             // Instructor Services
-            services.AddScoped<IExamService, ExamService>();
-            services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddTransient<IExamService, ExamService>();
+            services.AddTransient<IQuestionService, QuestionService>();
+            services.AddTransient<IAnswerService, AnswerService>();
 
             // Admin Services
-            services.AddScoped<IBranchService, BranchService>();
-            services.AddScoped<ITrackService, TrackService>();
-            services.AddScoped<IBranchTrackService, BranchTrackService>();
-            services.AddScoped<ITrackCourseService, TrackCourseService>();
-            services.AddScoped<ICoursePolicyService, CoursePolicyService>();
-            services.AddScoped<IApplicantService, ApplicantService>();
-            services.AddScoped<ITranslationService, TranslationService>();
+            services.AddTransient<IBranchService, BranchService>();
+            services.AddTransient<ITrackService, TrackService>();
+            services.AddTransient<IBranchTrackService, BranchTrackService>();
+            services.AddTransient<ITrackCourseService, TrackCourseService>();
+            services.AddTransient<ICoursePolicyService, CoursePolicyService>();
+            services.AddTransient<IApplicantService, ApplicantService>();
+            services.AddTransient<ITranslationService, TranslationService>();
 
             // Existing services
-            services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<IReportService, ReportService>();
+            services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<IReportService, ReportService>();
+            // ----------------------------------------------------
 
-            // FluentValidation validators
+            // Validators are stateless and can remain Scoped
             services.AddScoped<IValidator<Core.Models.User>, UserValidator>();
             services.AddScoped<IValidator<Exam>, ExamValidator>();
             services.AddScoped<IValidator<Core.Models.Question>, QuestionValidator>();

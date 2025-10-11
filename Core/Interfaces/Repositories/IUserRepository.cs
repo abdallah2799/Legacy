@@ -12,5 +12,9 @@ namespace Core.Interfaces.Repositories
         Task<User?> GetByUsernameAsync(string username);
         Task<IEnumerable<User>> GetByRoleAsync(string role);
 
+        // --- ADD THIS NEW METHOD ---
+        // This will correctly fetch the full Student object from the Users table.
+        Task<Student?> GetStudentByIdAsync(int id);
+
     }
 }
