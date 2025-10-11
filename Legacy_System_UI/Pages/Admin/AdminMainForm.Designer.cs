@@ -28,12 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "AdminMainForm";
+            materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
+            SuspendLayout();
+            // 
+            // materialLabel1
+            // 
+            materialLabel1.AutoSize = true;
+            materialLabel1.Depth = 0;
+            materialLabel1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            materialLabel1.Location = new Point(340, 196);
+            materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
+            materialLabel1.Name = "materialLabel1";
+            materialLabel1.Size = new Size(107, 19);
+            materialLabel1.TabIndex = 0;
+            materialLabel1.Text = "materialLabel1";
+            // 
+            // AdminMainForm
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(materialLabel1);
+            Name = "AdminMainForm";
+            Text = "AdminMainForm";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private MaterialSkin.Controls.MaterialLabel materialLabel1;
     }
 }
