@@ -160,8 +160,8 @@ namespace Legacy_System_UI.Pages.Student
                 // 2. Call the service to submit the exam
                 int finalScore = await _examService.SubmitExamAsync(_studentId, _examId, _userAnswers);
 
-                // 3. Show the final score to the user in a message box.
-                //    This pauses the code until the user clicks "OK".
+                //// 3. Show the final score to the user in a message box.
+                ////    This pauses the code until the user clicks "OK".
                 MessageBox.Show($"Submission Complete! Your Final Score is: {finalScore}", "Exam Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // --- THIS IS THE FIX ---

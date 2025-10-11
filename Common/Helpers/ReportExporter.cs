@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Helpers
 {
-    public static class ReportExporter
+    public abstract class ReportExporter
     {
         public static string GetReportFileName(string reportType, string identifier, string format)
         {
@@ -14,14 +14,14 @@ namespace Common.Helpers
             return $"{reportType}_{identifier}_{timestamp}.{format}";
         }
 
-        public static string GetMimeType(string format)
+        public static string GetFilterType(string format)
         {
             return format.ToLower() switch
             {
-                "pdf" => "application/pdf",
-                "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "xls" => "application/vnd.ms-excel",
-                _ => "application/octet-stream"
+                "pdf" => "PDF files (*.pdf)|*.pdf",
+                "xlsx" => "Excel Workbook (*.xlsx)|*.xlsx",
+                "xls" => "Excel 97-2003 Workbook (*.xls)|*.xls",
+                _ => "All files (*.*)|*.*" // Default to all files if format is unknown
             };
         }
     }
