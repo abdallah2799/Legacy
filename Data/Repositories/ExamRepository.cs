@@ -10,13 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class ExamRepository : IExamRepository
+    public class ExamRepository : GenericRepository<Exam>, IExamRepository
     {
-        private readonly LegacyDbContext _context;
-
-        public ExamRepository(LegacyDbContext context)
+        public ExamRepository(LegacyDbContext context) : base(context)
         {
-            _context = context;
+            // The body of the constructor is now empty.
+            // All it needs to do is pass the context to the base class.
         }
 
         public async Task AddAsync(Exam entity)

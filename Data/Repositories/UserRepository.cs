@@ -20,6 +20,16 @@ namespace Data.Repositories
             _context = context;
         }
 
+
+        public async Task<Student?> GetStudentByIdAsync(int id)
+        {
+            // This is the correct way to query a derived type in a TPH setup.
+            // It queries the base DbSet (Users) and filters for the Student type.
+            return await _context.Users
+                .OfType<Student>()
+                .FirstOrDefaultAsync(s => s.UserId == id);
+        }
+
         public async Task AddAsync(User entity)
         {
             if (entity == null)

@@ -1,7 +1,9 @@
-using Core.Interfaces.Services;
-using Core.Interfaces.Repositories;
-using Core.Models;
 using Common.Helpers;
+using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
+using Core.Models;
+using Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly ILogger<AuthService> _logger;
 
+        // The constructor is now clean again.
         public AuthService(IUserRepository userRepository, ILogger<AuthService> logger)
         {
             _userRepository = userRepository;
@@ -24,74 +27,57 @@ namespace Application.Services
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(loginOption) || string.IsNullOrWhiteSpace(password))
-                {
-                    _logger.LogWarning("Authentication attempted with empty credentials");
-                    return null;
-                }
-
-                // Find user by username or email
-                var users = await _userRepository.FindAsync(u => 
+                var users = await _userRepository.FindAsync(u =>
                     u.Username == loginOption || u.Email == loginOption);
 
                 var user = users.FirstOrDefault();
                 if (user == null)
                 {
-                    _logger.LogWarning("Authentication failed: User not found for login option: {LoginOption}", loginOption);
+                    _logger.LogWarning("Authentication failed: User not found for {LoginOption}", loginOption);
                     return null;
                 }
 
-                // Verify password
+                // --- THIS IS THE CORRECTED, SECURE LOGIC ---
+                // Re-enable the password verification
                 if (!PasswordHelper.VerifyPassword(user.PasswordHash, password))
                 {
-                    _logger.LogWarning("Authentication failed: Invalid password for user: {UserId}", user.UserId);
+                    _logger.LogWarning("Authentication failed: Invalid password for user {UserId}", user.UserId);
                     return null;
                 }
+                // ---------------------------------------------
 
                 _logger.LogInformation("User authenticated successfully: {UserId}", user.UserId);
+
+                if (user.Role == "Student")
+                {
+                    return await _userRepository.GetStudentByIdAsync(user.UserId);
+                }
+
                 return user;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during authentication for login option: {LoginOption}", loginOption);
+                _logger.LogError(ex, "Error during authentication for {LoginOption}", loginOption);
                 return null;
             }
         }
 
-        public async Task<string> HashPasswordAsync(string password)
+        public Task<string> HashPasswordAsync(string password)
         {
-            try
+            if (string.IsNullOrWhiteSpace(password))
             {
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    throw new ArgumentException("Password cannot be null or empty", nameof(password));
-                }
-
-                return PasswordHelper.HashPassword(password);
+                throw new ArgumentException("Password cannot be null or empty", nameof(password));
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error hashing password");
-                throw;
-            }
+            return Task.FromResult(PasswordHelper.HashPassword(password));
         }
 
-        public async Task<bool> VerifyPasswordAsync(string hash, string password)
+        public Task<bool> VerifyPasswordAsync(string hash, string password)
         {
-            try
+            if (string.IsNullOrWhiteSpace(hash) || string.IsNullOrWhiteSpace(password))
             {
-                if (string.IsNullOrWhiteSpace(hash) || string.IsNullOrWhiteSpace(password))
-                {
-                    return false;
-                }
-
-                return PasswordHelper.VerifyPassword(hash, password);
+                return Task.FromResult(false);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error verifying password");
-                return false;
-            }
+            return Task.FromResult(PasswordHelper.VerifyPassword(hash, password));
         }
     }
 }

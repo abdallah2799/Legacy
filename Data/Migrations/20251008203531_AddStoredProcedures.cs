@@ -13,7 +13,7 @@ namespace Data.Migrations
 
 
             migrationBuilder.Sql(@"
-                CREATE OR ALTER PROCEDURE sp_CalculateStudentExamScore
+                CREATE PROCEDURE [dbo].[sp_CalculateStudentExamScore]
                     @StudentExamID INT
                 AS
                 BEGIN
@@ -24,10 +24,11 @@ namespace Data.Migrations
                     -- =========================
                     -- 1. TrueFalse / ChooseOne
                     -- =========================
+                    -- FIX: Changed 'StudentAnswer' to 'StudentAnswers' to match your table name
                     SELECT @TotalScore = @TotalScore + ISNULL(SUM(Q.Marks), 0)
-                    FROM StudentAnswer SA
-                    INNER JOIN Questions Q ON SA.QuestionID = Q.QuestionID
-                    INNER JOIN Answers A ON SA.AnswerID = A.AnswerID
+                    FROM dbo.StudentAnswers SA
+                    INNER JOIN dbo.Questions Q ON SA.QuestionID = Q.QuestionID
+                    INNER JOIN dbo.Answers A ON SA.AnswerID = A.AnswerID
                     WHERE SA.StudentExamID = @StudentExamID
                       AND Q.Type IN ('TrueFalse', 'ChooseOne')
                       AND A.IsCorrect = 1;
@@ -41,8 +42,8 @@ namespace Data.Migrations
                             Q.QuestionID,
                             Q.Marks,
                             TotalCorrectAnswers = COUNT(CASE WHEN A.IsCorrect = 1 THEN 1 END)
-                        FROM Questions Q
-                        INNER JOIN Answers A ON Q.QuestionID = A.QuestionID
+                        FROM dbo.Questions Q
+                        INNER JOIN dbo.Answers A ON Q.QuestionID = A.QuestionID
                         WHERE Q.Type = 'ChooseAll'
                         GROUP BY Q.QuestionID, Q.Marks
                     ),
@@ -52,9 +53,9 @@ namespace Data.Migrations
                             SA.QuestionID,
                             SelectedCount = COUNT(*),
                             CorrectSelectedCount = COUNT(CASE WHEN A.IsCorrect = 1 THEN 1 END)
-                        FROM StudentAnswer SA
-                        INNER JOIN Answers A ON SA.AnswerID = A.AnswerID
-                        INNER JOIN Questions Q ON SA.QuestionID = Q.QuestionID
+                        FROM dbo.StudentAnswers SA -- FIX: Changed 'StudentAnswer' to 'StudentAnswers'
+                        INNER JOIN dbo.Answers A ON SA.AnswerID = A.AnswerID
+                        INNER JOIN dbo.Questions Q ON SA.QuestionID = Q.QuestionID
                         WHERE SA.StudentExamID = @StudentExamID AND Q.Type = 'ChooseAll'
                         GROUP BY SA.QuestionID
                     )
@@ -67,13 +68,16 @@ namespace Data.Migrations
                     -- =========================
                     -- Update StudentExam score
                     -- =========================
-                    UPDATE StudentExam
+                    -- FIX: Changed 'StudentExam' to 'StudentExams' to match your table name
+                    UPDATE dbo.StudentExams 
                     SET Score = @TotalScore,
                         SubmittedAt = COALESCE(SubmittedAt, GETDATE())
                     WHERE StudentExamID = @StudentExamID;
 
+                    -- Return the final calculated score
                     SELECT @TotalScore AS FinalScore;
                 END
+                GO
             ");
 
             // 1. Single student in single exam report
