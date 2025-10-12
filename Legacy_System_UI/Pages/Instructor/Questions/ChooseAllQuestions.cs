@@ -11,16 +11,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Legacy_System_UI.Pages.Instructor
+namespace Legacy_System_UI.Pages.Instructor.Questions
 {
-    public partial class InstructorMainForm : MaterialForm
+    public partial class ChooseAllQuestions : MaterialForm
     {
         private readonly SessionManager sessionManager;
 
         private MaterialSkinManager materialSkinManager;
         private ThemeManager themeManager;
         private LocalizationManager localizationManager;
-        public InstructorMainForm()
+        public ChooseAllQuestions()
         {
             InitializeComponent();
             materialSkinManager = MaterialSkinManager.Instance;
@@ -38,31 +38,6 @@ namespace Legacy_System_UI.Pages.Instructor
             themeManager.ApplyTheme(materialSkinManager);
 
             sessionManager = SessionManager.Instance;
-        }
-
-        private void ThemeSwitchBtn_CheckedChanged(object sender, EventArgs e)
-        {
-            themeManager.ToggleTheme();
-        }
-
-        private void ThemeSwitchBtn_CheckedChanged_1(object sender, EventArgs e)
-        {
-            themeManager.ToggleTheme();
-            //if (localizationManager.GetCurrentLanguage() == "ar")
-            //{
-            //    ThemeSwitchBtn.Text = themeManager.IsDarkMode
-            //        ? localizationManager.GetString("Theme_Dark")
-            //        : localizationManager.GetString("Theme_Light");
-            //}
-            //else
-            //{
-            //    ThemeSwitchBtn.Text = themeManager.IsDarkMode ? "Dark Mode" : "Light Mode";
-            //}
-        }
-
-        private void btn_TrueFalseQuestions_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

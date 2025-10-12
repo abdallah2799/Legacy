@@ -50,4 +50,13 @@
     <Folder Include="Components\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Pages\Instructor\Questions\ChooseAllQuestions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Pages\Instructor\Questions\ChooseOneQuestions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>
