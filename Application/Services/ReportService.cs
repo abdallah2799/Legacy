@@ -33,7 +33,7 @@ namespace Application.Services
             try
             {
                 var result = new StudentExamReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetStudentExamReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -45,11 +45,11 @@ namespace Application.Services
                 // Read exam details
                 if (await reader.ReadAsync())
                 {
-                    result.StudentExamID = Convert.ToInt32(reader["StudentExamID"]);
-                    result.StudentId = Convert.ToInt32(reader["StudentID"]);
+                    result.StudentExamID = reader["StudentExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentExamID"]);
+                    result.StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]);
                     result.StudentName = reader["StudentName"].ToString() ?? "";
                     result.StudentEmail = reader["StudentEmail"].ToString() ?? "";
-                    result.ExamId = Convert.ToInt32(reader["ExamID"]);
+                    result.ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]);
                     result.ExamTitle = reader["ExamTitle"].ToString() ?? "";
                     result.CourseName = reader["CourseName"].ToString() ?? "";
                     result.TrackName = reader["TrackName"].ToString() ?? "";
@@ -57,12 +57,12 @@ namespace Application.Services
                     result.ExamScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]);
                     result.StartedAt = reader["StartedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["StartedAt"]);
                     result.SubmittedAt = reader["SubmittedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["SubmittedAt"]);
-                    result.DurationMinutes = Convert.ToInt32(reader["DurationMinutes"]);
-                    result.Score = Convert.ToInt32(reader["Score"]);
-                    result.FullMark = Convert.ToInt32(reader["FullMark"]);
-                    result.PassMark = Convert.ToInt32(reader["PassMark"]);
-                    result.Percentage = Convert.ToDecimal(reader["Percentage"]);
-                    result.IsPassed = Convert.ToBoolean(reader["IsPassed"]);
+                    result.DurationMinutes = reader["DurationMinutes"] == DBNull.Value ? 0 : Convert.ToInt32(reader["DurationMinutes"]);
+                    result.Score = reader["Score"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Score"]);
+                    result.FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]);
+                    result.PassMark = reader["PassMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassMark"]);
+                    result.Percentage = reader["Percentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["Percentage"]);
+                    result.IsPassed = reader["IsPassed"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsPassed"]);
                     result.ExamStatus = reader["ExamStatus"].ToString() ?? "";
                 }
 
@@ -72,7 +72,7 @@ namespace Application.Services
                 var questionAnswers = new Dictionary<int, QuestionAnswerDTO>();
                 while (await reader.ReadAsync())
                 {
-                    var questionId = Convert.ToInt32(reader["QuestionID"]);
+                    var questionId = reader["QuestionID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["QuestionID"]);
                     if (!questionAnswers.ContainsKey(questionId))
                     {
                         questionAnswers[questionId] = new QuestionAnswerDTO
@@ -80,16 +80,16 @@ namespace Application.Services
                             QuestionId = questionId,
                             QuestionBody = reader["QuestionBody"].ToString() ?? "",
                             QuestionType = reader["QuestionType"].ToString() ?? "",
-                            QuestionMarks = Convert.ToInt32(reader["QuestionMarks"])
+                            QuestionMarks = reader["QuestionMarks"] == DBNull.Value ? 0 : Convert.ToInt32(reader["QuestionMarks"])
                         };
                     }
 
                     var answer = new AnswerDTO
                     {
-                        AnswerId = Convert.ToInt32(reader["AnswerID"]),
+                        AnswerId = reader["AnswerID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["AnswerID"]),
                         AnswerText = reader["AnswerText"].ToString() ?? "",
-                        IsCorrect = Convert.ToBoolean(reader["IsCorrect"]),
-                        IsSelected = Convert.ToBoolean(reader["IsSelected"])
+                        IsCorrect = reader["IsCorrect"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsCorrect"]),
+                        IsSelected = reader["IsSelected"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsSelected"])
                     };
 
                     questionAnswers[questionId].AvailableAnswers.Add(answer);
@@ -114,7 +114,7 @@ namespace Application.Services
             try
             {
                 var result = new StudentAllExamsReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetStudentAllExamsReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -126,13 +126,14 @@ namespace Application.Services
                 // Read student details
                 if (await reader.ReadAsync())
                 {
-                    result.StudentId = Convert.ToInt32(reader["StudentID"]);
+                    result.StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]);
                     result.StudentName = reader["StudentName"].ToString() ?? "";
                     result.StudentEmail = reader["StudentEmail"].ToString() ?? "";
                     result.TrackName = reader["TrackName"].ToString() ?? "";
                     result.BranchName = reader["BranchName"].ToString() ?? "";
                 }
 
+                _logger.LogInformation("Finished First Resullt");
                 await reader.NextResultAsync();
 
                 // Read exam summaries
@@ -142,20 +143,20 @@ namespace Application.Services
                     {
                         StudentId = result.StudentId,
                         StudentName = result.StudentName,
-                        ExamId = Convert.ToInt32(reader["ExamID"]),
+                        ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]),
                         ExamTitle = reader["ExamTitle"].ToString() ?? "",
                         CourseName = reader["CourseName"].ToString() ?? "",
                         ScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]),
                         StartedAt = reader["StartedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["StartedAt"]),
                         SubmittedAt = reader["SubmittedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["SubmittedAt"]),
-                        Score = Convert.ToInt32(reader["Score"]),
-                        FullMark = Convert.ToInt32(reader["FullMark"]),
-                        Percentage = Convert.ToDecimal(reader["Percentage"]),
-                        IsPassed = Convert.ToBoolean(reader["IsPassed"]),
+                        Score = reader["Score"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Score"]),
+                        FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]),
+                        Percentage = reader["Percentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["Percentage"]),
+                        IsPassed = reader["IsPassed"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsPassed"]),
                         ExamStatus = reader["ExamStatus"].ToString() ?? ""
                     });
                 }
-
+                _logger.LogInformation("Finished Second Resullt");
                 await reader.NextResultAsync();
 
                 // Read performance summary
@@ -163,22 +164,23 @@ namespace Application.Services
                 {
                     result.PerformanceSummary = new StudentPerformanceSummaryDTO
                     {
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        PassedExams = Convert.ToInt32(reader["PassedExams"]),
-                        FailedExams = Convert.ToInt32(reader["FailedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        HighestScore = Convert.ToInt32(reader["HighestScore"]),
-                        LowestScore = Convert.ToInt32(reader["LowestScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        PassedExams = reader["PassedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassedExams"]),
+                        FailedExams = reader["FailedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FailedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        HighestScore = reader["HighestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["HighestScore"]),
+                        LowestScore = reader["LowestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["LowestScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"]),
+
                     };
                 }
-
+                _logger.LogInformation("Finished Third Resullt");
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving student all exams report for StudentID: {StudentID}", studentId);
+                _logger.LogError(ex, $"Error retrieving student all exams report for StudentID: {studentId}, Exception Message : {ex.Message} , Source Exception : {ex.Source}");
                 throw;
             }
         }
@@ -188,7 +190,7 @@ namespace Application.Services
             try
             {
                 var result = new StudentInstructorExamsReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetStudentInstructorExamsReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -201,9 +203,9 @@ namespace Application.Services
                 // Read student and instructor details
                 if (await reader.ReadAsync())
                 {
-                    result.StudentId = Convert.ToInt32(reader["StudentID"]);
+                    result.StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]);
                     result.StudentName = reader["StudentName"].ToString() ?? "";
-                    result.InstructorId = Convert.ToInt32(reader["InstructorID"]);
+                    result.InstructorId = reader["InstructorID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["InstructorID"]);
                     result.InstructorName = reader["InstructorName"].ToString() ?? "";
                 }
 
@@ -216,16 +218,16 @@ namespace Application.Services
                     {
                         StudentId = result.StudentId,
                         StudentName = result.StudentName,
-                        ExamId = Convert.ToInt32(reader["ExamID"]),
+                        ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]),
                         ExamTitle = reader["ExamTitle"].ToString() ?? "",
                         CourseName = reader["CourseName"].ToString() ?? "",
                         ScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]),
                         StartedAt = reader["StartedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["StartedAt"]),
                         SubmittedAt = reader["SubmittedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["SubmittedAt"]),
-                        Score = Convert.ToInt32(reader["Score"]),
-                        FullMark = Convert.ToInt32(reader["FullMark"]),
-                        Percentage = Convert.ToDecimal(reader["Percentage"]),
-                        IsPassed = Convert.ToBoolean(reader["IsPassed"]),
+                        Score = reader["Score"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Score"]),
+                        FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]),
+                        Percentage = reader["Percentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["Percentage"]),
+                        IsPassed = reader["IsPassed"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsPassed"]),
                         ExamStatus = reader["ExamStatus"].ToString() ?? ""
                     });
                 }
@@ -237,14 +239,14 @@ namespace Application.Services
                 {
                     result.PerformanceSummary = new StudentPerformanceSummaryDTO
                     {
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        PassedExams = Convert.ToInt32(reader["PassedExams"]),
-                        FailedExams = Convert.ToInt32(reader["FailedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        HighestScore = Convert.ToInt32(reader["HighestScore"]),
-                        LowestScore = Convert.ToInt32(reader["LowestScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        PassedExams = reader["PassedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassedExams"]),
+                        FailedExams = reader["FailedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FailedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        HighestScore = reader["HighestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["HighestScore"]),
+                        LowestScore = reader["LowestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["LowestScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"])
                     };
                 }
 
@@ -262,7 +264,7 @@ namespace Application.Services
             try
             {
                 var result = new StudentCourseExamsReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetStudentCourseExamsReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -275,9 +277,9 @@ namespace Application.Services
                 // Read student and course details
                 if (await reader.ReadAsync())
                 {
-                    result.StudentId = Convert.ToInt32(reader["StudentID"]);
+                    result.StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]);
                     result.StudentName = reader["StudentName"].ToString() ?? "";
-                    result.CourseId = Convert.ToInt32(reader["CourseID"]);
+                    result.CourseId = reader["CourseID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourseID"]);
                     result.CourseName = reader["CourseName"].ToString() ?? "";
                     result.InstructorName = reader["InstructorName"] == DBNull.Value ? "" : reader["InstructorName"].ToString() ?? "";
                 }
@@ -291,16 +293,16 @@ namespace Application.Services
                     {
                         StudentId = result.StudentId,
                         StudentName = result.StudentName,
-                        ExamId = Convert.ToInt32(reader["ExamID"]),
+                        ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]),
                         ExamTitle = reader["ExamTitle"].ToString() ?? "",
                         CourseName = reader["CourseName"].ToString() ?? "",
                         ScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]),
                         StartedAt = reader["StartedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["StartedAt"]),
                         SubmittedAt = reader["SubmittedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["SubmittedAt"]),
-                        Score = Convert.ToInt32(reader["Score"]),
-                        FullMark = Convert.ToInt32(reader["FullMark"]),
-                        Percentage = Convert.ToDecimal(reader["Percentage"]),
-                        IsPassed = Convert.ToBoolean(reader["IsPassed"]),
+                        Score = reader["Score"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Score"]),
+                        FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]),
+                        Percentage = reader["Percentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["Percentage"]),
+                        IsPassed = reader["IsPassed"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsPassed"]),
                         ExamStatus = reader["ExamStatus"].ToString() ?? ""
                     });
                 }
@@ -312,14 +314,14 @@ namespace Application.Services
                 {
                     result.PerformanceSummary = new StudentPerformanceSummaryDTO
                     {
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        PassedExams = Convert.ToInt32(reader["PassedExams"]),
-                        FailedExams = Convert.ToInt32(reader["FailedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        HighestScore = Convert.ToInt32(reader["HighestScore"]),
-                        LowestScore = Convert.ToInt32(reader["LowestScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        PassedExams = reader["PassedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassedExams"]),
+                        FailedExams = reader["FailedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FailedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        HighestScore = reader["HighestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["HighestScore"]),
+                        LowestScore = reader["LowestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["LowestScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"])
                     };
                 }
 
@@ -337,7 +339,7 @@ namespace Application.Services
             try
             {
                 var result = new ExamStudentsReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetExamStudentsReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -349,14 +351,14 @@ namespace Application.Services
                 // Read exam details
                 if (await reader.ReadAsync())
                 {
-                    result.ExamId = Convert.ToInt32(reader["ExamID"]);
+                    result.ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]);
                     result.ExamTitle = reader["ExamTitle"].ToString() ?? "";
                     result.CourseName = reader["CourseName"].ToString() ?? "";
                     result.InstructorName = reader["InstructorName"] == DBNull.Value ? "" : reader["InstructorName"].ToString() ?? "";
                     result.ScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]);
-                    result.DurationMinutes = Convert.ToInt32(reader["DurationMinutes"]);
-                    result.FullMark = Convert.ToInt32(reader["FullMark"]);
-                    result.PassMark = Convert.ToInt32(reader["PassMark"]);
+                    result.DurationMinutes = reader["DurationMinutes"] == DBNull.Value ? 0 : Convert.ToInt32(reader["DurationMinutes"]);
+                    result.FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]);
+                    result.PassMark = reader["PassMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassMark"]);
                     result.ExamStatus = reader["ExamStatus"].ToString() ?? "";
                 }
 
@@ -367,7 +369,7 @@ namespace Application.Services
                 {
                     result.StudentResults.Add(new StudentExamSummaryDTO
                     {
-                        StudentId = Convert.ToInt32(reader["StudentID"]),
+                        StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]),
                         StudentName = reader["StudentName"].ToString() ?? "",
                         ExamId = result.ExamId,
                         ExamTitle = result.ExamTitle,
@@ -375,10 +377,10 @@ namespace Application.Services
                         ScheduledAt = result.ScheduledAt,
                         StartedAt = reader["StartedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["StartedAt"]),
                         SubmittedAt = reader["SubmittedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["SubmittedAt"]),
-                        Score = Convert.ToInt32(reader["Score"]),
-                        FullMark = Convert.ToInt32(reader["FullMark"]),
-                        Percentage = Convert.ToDecimal(reader["Percentage"]),
-                        IsPassed = Convert.ToBoolean(reader["IsPassed"]),
+                        Score = reader["Score"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Score"]),
+                        FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]),
+                        Percentage = reader["Percentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["Percentage"]),
+                        IsPassed = reader["IsPassed"] == DBNull.Value ? false : Convert.ToBoolean(reader["IsPassed"]),
                         ExamStatus = reader["ExamStatus"].ToString() ?? ""
                     });
                 }
@@ -390,16 +392,16 @@ namespace Application.Services
                 {
                     result.ExamStatistics = new ExamStatisticsDTO
                     {
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        StudentsAttempted = Convert.ToInt32(reader["StudentsAttempted"]),
-                        StudentsPassed = Convert.ToInt32(reader["StudentsPassed"]),
-                        StudentsFailed = Convert.ToInt32(reader["StudentsFailed"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        HighestScore = Convert.ToInt32(reader["HighestScore"]),
-                        LowestScore = Convert.ToInt32(reader["LowestScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"]),
-                        AttemptRate = Convert.ToDecimal(reader["AttemptRate"])
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        StudentsAttempted = reader["StudentsAttempted"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentsAttempted"]),
+                        StudentsPassed = reader["StudentsPassed"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentsPassed"]),
+                        StudentsFailed = reader["StudentsFailed"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentsFailed"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        HighestScore = reader["HighestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["HighestScore"]),
+                        LowestScore = reader["LowestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["LowestScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"]),
+                        AttemptRate = reader["AttemptRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AttemptRate"])
                     };
                 }
 
@@ -417,7 +419,7 @@ namespace Application.Services
             try
             {
                 var result = new InstructorCourseReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetInstructorCourseReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -430,9 +432,9 @@ namespace Application.Services
                 // Read instructor and course details
                 if (await reader.ReadAsync())
                 {
-                    result.InstructorId = Convert.ToInt32(reader["InstructorID"]);
+                    result.InstructorId = reader["InstructorID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["InstructorID"]);
                     result.InstructorName = reader["InstructorName"].ToString() ?? "";
-                    result.CourseId = Convert.ToInt32(reader["CourseID"]);
+                    result.CourseId = reader["CourseID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourseID"]);
                     result.CourseName = reader["CourseName"].ToString() ?? "";
                     result.TrackName = reader["TrackName"].ToString() ?? "";
                 }
@@ -444,17 +446,17 @@ namespace Application.Services
                 {
                     result.Exams.Add(new ExamSummaryDTO
                     {
-                        ExamId = Convert.ToInt32(reader["ExamID"]),
+                        ExamId = reader["ExamID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ExamID"]),
                         ExamTitle = reader["ExamTitle"].ToString() ?? "",
                         ScheduledAt = reader["ScheduledAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["ScheduledAt"]),
-                        DurationMinutes = Convert.ToInt32(reader["DurationMinutes"]),
-                        FullMark = Convert.ToInt32(reader["FullMark"]),
-                        PassMark = Convert.ToInt32(reader["PassMark"]),
+                        DurationMinutes = reader["DurationMinutes"] == DBNull.Value ? 0 : Convert.ToInt32(reader["DurationMinutes"]),
+                        FullMark = reader["FullMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FullMark"]),
+                        PassMark = reader["PassMark"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassMark"]),
                         ExamStatus = reader["ExamStatus"].ToString() ?? "",
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        StudentsAttempted = Convert.ToInt32(reader["StudentsAttempted"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        StudentsAttempted = reader["StudentsAttempted"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentsAttempted"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"])
                     });
                 }
 
@@ -465,13 +467,13 @@ namespace Application.Services
                 {
                     result.StudentPerformances.Add(new StudentCoursePerformanceDTO
                     {
-                        StudentId = Convert.ToInt32(reader["StudentID"]),
+                        StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]),
                         StudentName = reader["StudentName"].ToString() ?? "",
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        PassedExams = Convert.ToInt32(reader["PassedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        PassedExams = reader["PassedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"])
                     });
                 }
 
@@ -482,14 +484,14 @@ namespace Application.Services
                 {
                     result.CourseStatistics = new CourseStatisticsDTO
                     {
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        CompletedExams = Convert.ToInt32(reader["CompletedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        OverallPassRate = Convert.ToDecimal(reader["OverallPassRate"]),
-                        HighestScore = Convert.ToInt32(reader["HighestScore"]),
-                        LowestScore = Convert.ToInt32(reader["LowestScore"])
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        CompletedExams = reader["CompletedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CompletedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        OverallPassRate = reader["OverallPassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["OverallPassRate"]),
+                        HighestScore = reader["HighestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["HighestScore"]),
+                        LowestScore = reader["LowestScore"] == DBNull.Value ? 0 : Convert.ToInt32(reader["LowestScore"])
                     };
                 }
 
@@ -507,7 +509,7 @@ namespace Application.Services
             try
             {
                 var result = new TrackBranchReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetTrackBranchReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -520,9 +522,9 @@ namespace Application.Services
                 // Read track and branch details
                 if (await reader.ReadAsync())
                 {
-                    result.TrackId = Convert.ToInt32(reader["TrackID"]);
+                    result.TrackId = reader["TrackID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TrackID"]);
                     result.TrackName = reader["TrackName"].ToString() ?? "";
-                    result.BranchId = Convert.ToInt32(reader["BranchID"]);
+                    result.BranchId = reader["BranchID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["BranchID"]);
                     result.BranchName = reader["BranchName"].ToString() ?? "";
                     result.SupervisorName = reader["SupervisorName"] == DBNull.Value ? "" : reader["SupervisorName"].ToString() ?? "";
                 }
@@ -534,13 +536,13 @@ namespace Application.Services
                 {
                     result.Courses.Add(new CourseSummaryDTO
                     {
-                        CourseId = Convert.ToInt32(reader["CourseID"]),
+                        CourseId = reader["CourseID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourseID"]),
                         CourseName = reader["CourseName"].ToString() ?? "",
                         InstructorName = reader["InstructorName"] == DBNull.Value ? "" : reader["InstructorName"].ToString() ?? "",
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"])
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"])
                     });
                 }
 
@@ -551,16 +553,16 @@ namespace Application.Services
                 {
                     result.StudentPerformances.Add(new StudentTrackPerformanceDTO
                     {
-                        StudentId = Convert.ToInt32(reader["StudentID"]),
+                        StudentId = reader["StudentID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StudentID"]),
                         StudentName = reader["StudentName"].ToString() ?? "",
-                        TotalCourses = Convert.ToInt32(reader["TotalCourses"]),
-                        CompletedCourses = Convert.ToInt32(reader["CompletedCourses"]),
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        PassedExams = Convert.ToInt32(reader["PassedExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"]),
-                        CompletionRate = Convert.ToDecimal(reader["CompletionRate"])
+                        TotalCourses = reader["TotalCourses"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalCourses"]),
+                        CompletedCourses = reader["CompletedCourses"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CompletedCourses"]),
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        PassedExams = reader["PassedExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["PassedExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"]),
+                        CompletionRate = reader["CompletionRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["CompletionRate"])
                     });
                 }
 
@@ -571,13 +573,13 @@ namespace Application.Services
                 {
                     result.TrackStatistics = new TrackStatisticsDTO
                     {
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        TotalCourses = Convert.ToInt32(reader["TotalCourses"]),
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        OverallPassRate = Convert.ToDecimal(reader["OverallPassRate"]),
-                        CourseCompletionRate = Convert.ToDecimal(reader["CourseCompletionRate"])
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        TotalCourses = reader["TotalCourses"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalCourses"]),
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        OverallPassRate = reader["OverallPassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["OverallPassRate"]),
+                        CourseCompletionRate = reader["CourseCompletionRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["CourseCompletionRate"])
                     };
                 }
 
@@ -595,7 +597,7 @@ namespace Application.Services
             try
             {
                 var result = new TrackAllBranchesReportDTO();
-                
+
                 using var command = _context.Database.GetDbConnection().CreateCommand();
                 command.CommandText = "sp_GetTrackAllBranchesReport";
                 command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -607,7 +609,7 @@ namespace Application.Services
                 // Read track details
                 if (await reader.ReadAsync())
                 {
-                    result.TrackId = Convert.ToInt32(reader["TrackID"]);
+                    result.TrackId = reader["TrackID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TrackID"]);
                     result.TrackName = reader["TrackName"].ToString() ?? "";
                 }
 
@@ -618,14 +620,14 @@ namespace Application.Services
                 {
                     result.BranchSummaries.Add(new BranchTrackSummaryDTO
                     {
-                        BranchId = Convert.ToInt32(reader["BranchID"]),
+                        BranchId = reader["BranchID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["BranchID"]),
                         BranchName = reader["BranchName"].ToString() ?? "",
                         ManagerName = reader["ManagerName"] == DBNull.Value ? "" : reader["ManagerName"].ToString() ?? "",
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        PassRate = Convert.ToDecimal(reader["PassRate"]),
-                        StudentPerformance = Convert.ToDecimal(reader["StudentPerformance"])
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        PassRate = reader["PassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["PassRate"]),
+                        StudentPerformance = reader["StudentPerformance"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["StudentPerformance"])
                     });
                 }
 
@@ -636,12 +638,12 @@ namespace Application.Services
                 {
                     result.OverallStatistics = new TrackOverallStatisticsDTO
                     {
-                        TotalBranches = Convert.ToInt32(reader["TotalBranches"]),
-                        TotalStudents = Convert.ToInt32(reader["TotalStudents"]),
-                        TotalExams = Convert.ToInt32(reader["TotalExams"]),
-                        AverageScore = Convert.ToDecimal(reader["AverageScore"]),
-                        AveragePercentage = Convert.ToDecimal(reader["AveragePercentage"]),
-                        OverallPassRate = Convert.ToDecimal(reader["OverallPassRate"]),
+                        TotalBranches = reader["TotalBranches"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalBranches"]),
+                        TotalStudents = reader["TotalStudents"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalStudents"]),
+                        TotalExams = reader["TotalExams"] == DBNull.Value ? 0 : Convert.ToInt32(reader["TotalExams"]),
+                        AverageScore = reader["AverageScore"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AverageScore"]),
+                        AveragePercentage = reader["AveragePercentage"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["AveragePercentage"]),
+                        OverallPassRate = reader["OverallPassRate"] == DBNull.Value ? 0M : Convert.ToDecimal(reader["OverallPassRate"]),
                         BestPerformingBranch = reader["BestPerformingBranch"] == DBNull.Value ? "" : reader["BestPerformingBranch"].ToString() ?? "",
                         WorstPerformingBranch = reader["WorstPerformingBranch"] == DBNull.Value ? "" : reader["WorstPerformingBranch"].ToString() ?? ""
                     };
