@@ -309,4 +309,7 @@
   <data name="Confirm_Application" xml:space="preserve">
     <value>Confirm Application</value>
   </data>
+  <data name="check_status" xml:space="preserve">
+    <value>Check Application Status</value>
+  </data>
 </root>

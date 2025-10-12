@@ -198,9 +198,10 @@ namespace Legacy_System_UI.Pages.Shared
                     if(SessionManager.Instance.IsAdmin())
                     {
                         // Navigate to admin dashboard
-                        var adminDashboard = new AdminMainForm();
+                        var adminDashboard = new AdminMainForm(this);
                         adminDashboard.Show();
-                        sessionManager.Login(user);
+                        Tb_LoginOption.Text = "";
+                        Tb_Password.Text = "";
                         this.Hide();
                         return;
                     }

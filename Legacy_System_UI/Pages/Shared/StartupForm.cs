@@ -70,6 +70,7 @@ namespace Legacy_System_UI.Pages.Shared
             Login_Btn.Text = localizationManager.GetString("Login_Title");
             Apply_Btn.Text = localizationManager.GetString("Apply");
             QB_Btn.Text = localizationManager.GetString("Menu_QuestionBank");
+            CheckStatus_Btn.Text = localizationManager.GetString("check_status");
 
             // Update language combo
             cmbLanguage.Items.Clear();
@@ -121,22 +122,22 @@ namespace Legacy_System_UI.Pages.Shared
         private void Login_Btn_Click(object sender, EventArgs e)
         {
             var loginForm = new LoginForm(this);
-            loginForm.Show();
             this.Hide();
+            loginForm.Show();   
         }
 
         private void Apply_Btn_Click(object sender, EventArgs e)
         {
             var applianceForm = new ApplianceMainForm(this);
-            applianceForm.Show();
             this.Hide();
+            applianceForm.Show();
         }
 
         private void QB_Btn_Click(object sender, EventArgs e)
         {
             var questionBankForm = new QuestionBankForm(this);
-            questionBankForm.Show();
             this.Hide();
+            questionBankForm.Show();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -149,7 +150,10 @@ namespace Legacy_System_UI.Pages.Shared
                     e.Cancel = true;
                     return;
                 }
-                base.OnFormClosing(e);
+                else
+                {
+                    base.OnFormClosing(e);
+                }
             }
 
         }
@@ -157,8 +161,8 @@ namespace Legacy_System_UI.Pages.Shared
         private void CheckStatus_Btn_Click(object sender, EventArgs e)
         {
             var checkApplicationStatusForm = new CheckApplicationStatusForm(this);
-            checkApplicationStatusForm.Show();
             this.Hide();
+            checkApplicationStatusForm.Show();
         }
     }
 }
