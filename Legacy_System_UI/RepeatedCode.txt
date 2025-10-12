@@ -81,3 +81,54 @@
                 localizationManager.SetLanguage("ar");
             }
         }
+
+
+
+        ====================================================================================================================
+
+private async void MaterialButtonGenerateStudentExamReport_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(materialTextBoxStudentExamId.Text, out int studentExamId))
+            {
+                MaterialMessageBox.Show("Please enter a valid Student Exam ID.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Show a loading indicator if you have one (e.g., MaterialProgressBar)
+                // materialProgressBar1.Visible = true;
+                // materialProgressBar1.Style = ProgressBarStyle.Marquee;
+
+                // Generate the PDF report
+                byte[] pdfBytes = await _reportService.GenerateStudentExamReportPDFAsync(studentExamId);
+
+                // Hide loading indicator
+                // materialProgressBar1.Visible = false;
+
+                // Use SaveFileDialog to let the user choose where to save the file
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+                    saveFileDialog.FileName = $"StudentExamReport_{studentExamId}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+                    saveFileDialog.Title = "Save Student Exam Report PDF";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        await File.WriteAllBytesAsync(saveFileDialog.FileName, pdfBytes);
+                        MaterialMessageBox.Show($"Report saved successfully to: {saveFileDialog.FileName}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MaterialMessageBox.Show("Report generation cancelled by user.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hide loading indicator if an error occurred
+                // materialProgressBar1.Visible = false;
+                MaterialMessageBox.Show($"An error occurred while generating the report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Optionally log the full exception: _logger.LogError(ex, "Failed to generate student exam report.");
+            }
+        }

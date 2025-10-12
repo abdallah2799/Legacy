@@ -1,102 +1,268 @@
-🎓 Examination System – Updated Overview (2025 Edition)
-🎯 Goal
+# Legacy Examination System
 
-نظام إدارة امتحانات متكامل متعدد الفروع (Branches) والتراكات (Tracks) على نمط ITI.
-يدير الطلاب والمدرسين والإدمنز مع أدوار مميزة للمديرين (Branch Manager) والمشرفين (Track Supervisor).
-يشمل إدارة السياسات الدراسية، الاختبارات، الدرجات، والمراجعات.
+## Project Overview
 
-🧱 Architecture (Onion / Clean Architecture)
-🟣 Core Layer
+The Legacy Examination System is a comprehensive examination management system designed for educational institutions with multiple branches and tracks, following the ITI (Information Technology Institute) model. The system handles the administration of students, instructors, and administrators, with specialized roles for Branch Managers and Track Supervisors.
 
-Purpose: Defines the domain model — the entities, enums, and interfaces — without implementation.
+### Key Features
 
-Contents:
+- Multi-branch and multi-track management
+- Comprehensive exam creation and management
+- Automated grading and result processing
+- Course policy management
+- Multilingual support
+- Detailed reporting system
+- Applicant management workflow
 
-Entities: User, Admin, Instructor, Student, Branch, Track, Course, Exam, Question, Answer, CoursePolicy, StudentExam, StudentAnswer, Applicant, Log, Translation.
+## Architecture
 
-Enums: Gender, ExamStatus, ExamType, QuestionType, ApplicantStatus, UserRole.
+The project follows the Clean Architecture (Onion Architecture) pattern, organized into the following layers:
 
-Interfaces: IRepository<T>, IUnitOfWork, IExamService, IStudentService, ICourseService...
+### 🟣 Core Layer (Domain)
 
-Dependencies: None.
+The heart of the application, containing:
 
-🟠 Common Layer
+- Domain Entities:
+  - User (Admin, Instructor, Student)
+  - Branch, Track, Course
+  - Exam, Question, Answer
+  - StudentExam, StudentAnswer
+  - Applicant, Log, Translation
 
-Purpose: Shared utilities and constants.
+- Enums:
+  - GenderEnum
+  - ExamStatusEnum
+  - ExamTypeEnum
+  - QuestionType
+  - ApplicationStatus
+  - UserRoleEnum
 
-Contents:
+- Interfaces for repositories and services
 
-Constants (like default pass percentages, max attempts, roles).
+Dependencies: None (Independent layer)
 
-Helpers (e.g., PasswordHasher, RandomCodeGenerator).
+### 🟠 Common Layer
 
-Logging (Serilog configuration and wrappers).
+Shared utilities and constants used across the application:
 
-Dependencies: None special (shared across all).
+- Constants
+  - Validation rules
+  - Default values
+  - System configurations
+  - Cache durations
 
-🟡 Data Layer
+- Helpers
+  - PasswordHelper (Secure password hashing)
+  - Validator (Input validation)
+  - EmailSettings
+  - EncryptionHelper
+  - MigrationConstraintsHelper
+  - ReportExporter
 
-Purpose: Persistence and EF Core configurations.
+Dependencies: None (Shared utilities)
 
-Contents:
+### 🟡 Data Layer
 
-LegacyDbContext (now reflects the new normalized DB).
+Handles data persistence and database interactions:
 
-Configurations: all Fluent API mappings (BranchTrackConfig, CoursePolicyConfig, etc.).
+- LegacyDbContext
+- Entity Configurations
+- Repository Implementations
+- Migration Management
+- Stored Procedures
 
-Repositories: implement domain interfaces.
+Key Features:
+- TPH inheritance for User hierarchy
+- Complex relationships (BranchTracks, TrackCourses)
+- Optimized query performance
+- Data integrity constraints
 
-Migrations: created and maintained by EF.
+Dependencies: Core, Common
 
-Schema Highlights (synchronized with DB):
+### 🟢 Application Layer
 
-TPH inheritance for User subclasses (Admin, Instructor, Student).
+Business logic orchestration:
 
-Full relational design with BranchTracks, TrackCourses, InstructorCourse, CoursePolicies.
+- Services:
+  - AuthService (Authentication)
+  - UserService (User management)
+  - ExamService (Exam operations)
+  - CourseService (Course management)
+  - ReportService (Report generation)
+  - ValidationService (Input validation)
+  - CacheService (Data caching)
+  - EmailService (Notifications)
 
-FK constraints with cascade behavior defined.
+Dependencies: Core, Data, Common
 
-Translation table for multilingual fields.
+### 🔵 UI Layer
 
-Dependencies: Core + Common.
+Presentation layer with role-based interfaces:
 
-🟢 Application Layer
+- Admin Interface
+  - Branch/Track management
+  - User administration
+  - System configuration
 
-Purpose: Business logic orchestration.
+- Instructor Interface
+  - Exam creation
+  - Question management
+  - Result assessment
 
-Contents:
+- Student Interface
+  - Course access
+  - Exam participation
+  - Result viewing
 
-Services:
+## Developer Guide
 
-UserService (Authentication, CRUD)
+### Services
 
-StudentService (Enrollments, Exam registration)
+#### Core Services
 
-InstructorService (Exam creation, grading)
+1. **AuthService**
+   - User authentication
+   - Role-based access control
+   - Session management
 
-AdminService (System configuration)
+2. **UserService**
+   - User CRUD operations
+   - Role management
+   - Profile updates
 
-ExamService (Exam generation, evaluation)
+3. **ExamService**
+   - Exam creation and scheduling
+   - Question randomization
+   - Auto-grading
+   - Result processing
 
-Dependency Injection registration (DbContext, Repositories, Logging, Services).
+4. **CourseService**
+   - Course management
+   - Policy enforcement
+   - Track association
 
-Configures EF options (lazy loading, query tracking).
+#### Support Services
 
-Dependencies: Core + Data + Common.
+1. **ValidationService**
+   - Input validation
+   - Business rule validation
+   - Data integrity checks
 
-🔵 UI Layer (WinForms)
+2. **CacheService**
+   - Data caching
+   - Cache invalidation
+   - Performance optimization
 
-Purpose: Presentation layer for end-users (multi-role interface).
+3. **ReportService**
+   - PDF/Excel report generation
+   - Performance analytics
+   - Statistical analysis
 
-Structure:
+4. **EmailService**
+   - Notification delivery
+   - Template management
+   - Queue handling
 
-Forms separated by Role:
+### Helpers and Utilities
 
-Admin: Manage branches, tracks, users, course policies.
+1. **PasswordHelper**
+```csharp
+// Password hashing with PBKDF2
+PasswordHelper.HashPassword(string password)
+PasswordHelper.VerifyPassword(string hashedPassword, string providedPassword)
+```
 
-Instructor: Manage exams, questions, results.
+2. **Validator**
+```csharp
+// Input validation
+Validator.IsValidEmail(string email)
+Validator.IsValidPhone(string phone)
+Validator.IsValidAge(int age)
+Validator.IsValidPassword(string password)
+Validator.IsValidUsername(string username)
+Validator.IsValidDateRange(DateTime start, DateTime end)
+```
 
-Student: View courses, take exams, view grades.
+3. **Constants**
+```csharp
+// System defaults
+Constants.Defaults.MIN_EXAM_DURATION_MINUTES = 30
+Constants.Defaults.MAX_EXAM_DURATION_MINUTES = 180
+Constants.Defaults.DEFAULT_PASS_PERCENTAGE = 60
+Constants.Defaults.MAX_EXAM_ATTEMPTS = 3
+```
+
+### Working with the System
+
+1. **Exam Creation**
+```csharp
+await examService.CreateExamAsync(new Exam {
+    Title = "Final Exam",
+    DurationMinutes = 120,
+    TrackCourseId = trackCourseId,
+    ScheduledAt = DateTime.Now.AddDays(7)
+});
+```
+
+2. **User Management**
+```csharp
+await userService.RegisterAsync(new User {
+    FullName = "John Doe",
+    Email = "john@example.com",
+    Username = "johndoe"
+}, "password123");
+```
+
+3. **Report Generation**
+```csharp
+var reportBytes = await reportService.GenerateExamReport(examId, ReportTypeEnum.PDF);
+```
+
+4. **Validation Usage**
+```csharp
+if (!Validator.IsValidEmail(email))
+    throw new ValidationException("Invalid email format");
+```
+
+### Database Operations
+
+1. **Using Repositories**
+```csharp
+// Example: Fetching student exams
+var studentExams = await studentExamRepository.GetByStudentAsync(studentId);
+```
+
+2. **Transaction Management**
+```csharp
+using var transaction = await _context.Database.BeginTransactionAsync();
+try {
+    // Perform operations
+    await transaction.CommitAsync();
+} catch {
+    await transaction.RollbackAsync();
+    throw;
+}
+```
+
+### Caching Strategy
+
+1. **Cache Duration Constants**
+```csharp
+CACHE_COURSES_EXPIRATION = TimeSpan.FromHours(2)
+CACHE_TRACKS_EXPIRATION = TimeSpan.FromHours(2)
+CACHE_USERS_EXPIRATION = TimeSpan.FromMinutes(30)
+```
+
+2. **Cache Usage**
+```csharp
+var courses = await _cacheService.GetOrSetAsync(
+    "courses",
+    () => _courseRepository.GetAllAsync(),
+    Constants.Defaults.CACHE_COURSES_EXPIRATION
+);
+```
+
+For more detailed information about specific components or implementation details, please refer to the individual service and component documentation in the codebase.
 
 Shared: Login, Dashboard, Profile.
 
